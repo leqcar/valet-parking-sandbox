@@ -1,4 +1,24 @@
+server:
+  port: 8888
+
 spring:
-  application:
-    name: valet-configuration-service
-    
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/leqcar/sampleConfig
+
+management:
+  context-path: /admin
+
+logging:
+  level:
+    com.netflix.discovery: 'OFF'
+    org.springframework.cloud: 'DEBUG'
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    statusPageUrlPath: /admin/info
+    healthCheckUrlPath: /admin/health
+
