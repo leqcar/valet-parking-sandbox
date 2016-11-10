@@ -26,9 +26,11 @@
     </properties>
     
 	<modules>
+		<module>valet-api-gateway</module>
 		<module>valet-discovery-service</module>
 		<module>valet-configuration-service</module>
 		<module>valet-vehicle-service</module>
+		<module>valet-parking-service</module>
 	</modules>    
 	
 	<dependencies>
