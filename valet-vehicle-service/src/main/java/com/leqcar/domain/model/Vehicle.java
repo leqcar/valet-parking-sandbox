@@ -26,8 +26,12 @@ public class Vehicle {
 
     private int mileage;
 
-    public Vehicle(Long id, String make, String model, int year, String type, String color, int mileage) {
-        this.id = id;
+    
+    public Vehicle() {
+    	//noop
+	}
+
+	public Vehicle(String make, String model, int year, String type, String color, int mileage) {
         this.make = make;
         this.model = model;
         this.year = year;
@@ -63,4 +67,11 @@ public class Vehicle {
     public int getMileage() {
         return mileage;
     }
+
+	@Override
+	public String toString() {
+		return "Vehicle [id=" + id + ", make=" + make + ", model=" + model + ", year=" + year + ", type=" + type
+				+ ", color=" + color + ", mileage=" + mileage + "]";
+	}
+      
 }
