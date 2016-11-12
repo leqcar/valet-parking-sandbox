@@ -26,9 +26,9 @@ public class VehicleServiceApplication {
 	
 	@Bean
 	CommandLineRunner DummyVehicleCLR() {
-		return arg -> {
-			Vehicle toyotaVios = new Vehicle("Toyota", "Vios", 2016, "Automatic", "Gray", 0);
-			Vehicle toyotaAltis = new Vehicle("Toyota", "Corolla Altis", 2016, "Automatic", "Black", 0);
+		return r -> {
+			Vehicle toyotaVios = new Vehicle("Toyota", "Vios", 2016, "Automatic", "Gray", 0, "ABC123");
+			Vehicle toyotaAltis = new Vehicle("Toyota", "Corolla Altis", 2016, "Automatic", "Black", 0, "DEF123");
 			
 			List<Vehicle> vehicles = Arrays.asList(toyotaAltis, toyotaVios);
 			vehicles.stream().forEach(v -> vehicleRepository.save(v));

@@ -26,18 +26,20 @@ public class Vehicle {
 
     private int mileage;
 
-    
+    private String plateNumber;
+
     public Vehicle() {
     	//noop
 	}
 
-	public Vehicle(String make, String model, int year, String type, String color, int mileage) {
+    public Vehicle(String make, String model, int year, String type, String color, int mileage, String plateNumber) {
         this.make = make;
         this.model = model;
         this.year = year;
         this.type = type;
         this.color = color;
         this.mileage = mileage;
+        this.plateNumber = plateNumber;
     }
 
     public Long getId() {
@@ -68,10 +70,21 @@ public class Vehicle {
         return mileage;
     }
 
-	@Override
-	public String toString() {
-		return "Vehicle [id=" + id + ", make=" + make + ", model=" + model + ", year=" + year + ", type=" + type
-				+ ", color=" + color + ", mileage=" + mileage + "]";
-	}
-      
+    public String getPlateNumber() {
+        return plateNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "id=" + id +
+                ", make='" + make + '\'' +
+                ", model='" + model + '\'' +
+                ", year=" + year +
+                ", type='" + type + '\'' +
+                ", color='" + color + '\'' +
+                ", mileage=" + mileage +
+                ", plateNumber='" + plateNumber + '\'' +
+                '}';
+    }
 }

@@ -6,11 +6,11 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 /**
- * Created by jongtenerife on 09/11/2016.
+ * Created by jongtenerife on 12/11/2016.
  */
-@RepositoryRestResource(path = "vehicles")
-public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
+@RepositoryRestResource(path = "valets")
+public interface ValetRepository extends JpaRepository<Valet, Long> {
 
-    @RestResource(path = "by-plateNumber")
-    Vehicle findByPlateNumber(@Param("plateNumber") String plateNumber);
+    @RestResource(path = "by-ticketNumber")
+    Valet findByTicketNumber(@Param("ticketNumber") String ticketNumber);
 }
