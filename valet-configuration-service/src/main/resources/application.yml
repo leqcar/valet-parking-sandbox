@@ -6,8 +6,8 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/leqcar/sampleConfig
-          #uri: D:\JONG\git\sampleConfig          
+          # uri: https://github.com/leqcar/sampleConfig
+          uri: D:\JONG\git\sampleConfig          
           
 
 management:
