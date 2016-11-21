@@ -1,10 +1,11 @@
 package com.leqcar.domain.model;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * Created by jongtenerife on 09/11/2016.
@@ -12,12 +13,23 @@ import java.util.UUID;
 @Entity
 public class Valet {
 
-    @Id
+	//TODO: move to property file
+    private static final int GRACE_PERIOD_30MINS = 30;
+
+	@Id
     @GeneratedValue
     private Long id;
 
-	private String ticketNumber;
+	private ClaimTicket claimTicket;
+	
+	private ValetAttendant valetAttendant;
 
+	private ValetStatus valetStatus;
+	
+	private ValetEvent valetEvent;
+	
+	private LocalDateTime dateTimeOccured;
+	
     private LocalDateTime dateTimeIn;
 
     private LocalDateTime dateTimeOut;
@@ -28,28 +40,44 @@ public class Valet {
 
     private String note;
     
-    private String vehicleId;
-
+    private Vehicle vehicle;
     
 	public Valet() {
 		//noop
 	}
 
-	public Valet(String parkingLot, int parkingSpot,
-			String note, String vehicleId) {
+
+	public Valet(ClaimTicket claimTicket, LocalDateTime dateTimeIn, LocalDateTime dateTimeOut, String parkingLot,
+			int parkingSpot, String note, Vehicle vehicle) {
 		super();
-		this.dateTimeIn = LocalDateTime.now();
+		this.claimTicket = claimTicket;
+		this.dateTimeIn = dateTimeIn;
+		this.dateTimeOut = dateTimeOut;
 		this.parkingLot = parkingLot;
 		this.parkingSpot = parkingSpot;
 		this.note = note;
-		this.vehicleId = vehicleId;
-		this.ticketNumber = generateTicketNumber();
+		this.vehicle = vehicle;
 	}
 
-	private String generateTicketNumber() {
-		return "REF-" + UUID.randomUUID().toString();
+	public Valet(Vehicle vehicle, ValetEvent valetEvent, ValetStatus valetStatus) {
+		this.vehicle = vehicle;
+		this.valetEvent = valetEvent;
+		this.valetStatus = valetStatus;
 	}
 
+	public Valet requestValet(Vehicle vehicle, ValetEvent valetEvent) {
+		return new Valet(vehicle, valetEvent, ValetStatus.REQUESTED);
+	}
+	
+	public Valet cancelValet(Vehicle vehicle, ValetEvent valetEvent) {
+		return new Valet(vehicle, valetEvent, ValetStatus.CANCELLED);
+	}
+	
+	public boolean isWithinGracePeriod() {
+		Long result=this.dateTimeOccured.until(LocalDateTime.now(), ChronoUnit.MINUTES);
+		return result > GRACE_PERIOD_30MINS ? false : true;
+	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -69,18 +97,25 @@ public class Valet {
 	public int getParkingSpot() {
 		return parkingSpot;
 	}
-
+ 
 	public String getNote() {
 		return note;
 	}
 
-	public String getVehicleId() {
-		return vehicleId;
+	public ClaimTicket getClaimTicket() {
+		return claimTicket;
 	}
 
-	public String getTicketNumber() {
-		return ticketNumber;
+
+	public ValetAttendant getValetAttendant() {
+		return valetAttendant;
 	}
+
+
+	public Vehicle getVehicle() {
+		return vehicle;
+	}
+
 
 	private void setDateTimeOut(LocalDateTime dateTimeOut) {
 		this.dateTimeOut = dateTimeOut;
@@ -89,18 +124,26 @@ public class Valet {
 	public void checkOut() {
 		setDateTimeOut(LocalDateTime.now());
 	}
+		
+	public LocalDateTime getDateTimeRequested() {
+		return dateTimeOccured;
+	}
+
+	public ValetStatus getValetStatus() {
+		return valetStatus;
+	}
 
 	@Override
 	public String toString() {
 		return "Valet{" +
 				"id=" + id +
-				", ticketNumber='" + ticketNumber + '\'' +
+				", ClaimTicket='" + claimTicket + '\'' +
 				", dateTimeIn=" + dateTimeIn +
 				", dateTimeOut=" + dateTimeOut +
 				", parkingLot='" + parkingLot + '\'' +
 				", parkingSpot=" + parkingSpot +
 				", note='" + note + '\'' +
-				", vehicleId='" + vehicleId + '\'' +
+				", vehicle='" + vehicle + '\'' +
 				'}';
 	}
 }

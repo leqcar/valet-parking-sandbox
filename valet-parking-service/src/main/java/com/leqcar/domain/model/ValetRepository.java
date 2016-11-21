@@ -12,5 +12,5 @@ import org.springframework.data.rest.core.annotation.RestResource;
 public interface ValetRepository extends JpaRepository<Valet, Long> {
 
     @RestResource(path = "by-ticketNumber")
-    Valet findByTicketNumber(@Param("ticketNumber") String ticketNumber);
+    Valet findByClaimTicketTicketNumber(@Param("ticketNumber") String ticketNumber);
 }
