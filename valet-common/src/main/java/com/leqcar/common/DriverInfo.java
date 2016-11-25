@@ -1,15 +1,7 @@
-package com.leqcar.domain.model;
+package com.leqcar.common;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+public class DriverInfo {
 
-@Entity
-public class Driver {
-
-	@Id
-	@GeneratedValue
-	private Long id;
 	
 	private String customerNumber;
 	
@@ -21,11 +13,13 @@ public class Driver {
 	
 	private String mobileNumber;
 
-	public Driver() {
-		//noop
+
+	public DriverInfo() {
 	}
 
-	public Driver(String customerNumber, String licenseNumber, String firstName, String lastName, String mobileNumber) {
+
+	public DriverInfo(String customerNumber, String licenseNumber, String firstName, String lastName,
+			String mobileNumber) {
 		this.customerNumber = customerNumber;
 		this.licenseNumber = licenseNumber;
 		this.firstName = firstName;
@@ -33,9 +27,11 @@ public class Driver {
 		this.mobileNumber = mobileNumber;
 	}
 
+	
 	public String getCustomerNumber() {
 		return customerNumber;
 	}
+
 
 	public String getLicenseNumber() {
 		return licenseNumber;
@@ -53,10 +49,4 @@ public class Driver {
 		return mobileNumber;
 	}
 
-	@Override
-	public String toString() {
-		return "Driver [customerNumber=" + customerNumber + ", licenseNumber=" + licenseNumber + ", firstName="
-				+ firstName + ", lastName=" + lastName + ", mobileNumber=" + mobileNumber + "]";
-	}		
-		
 }

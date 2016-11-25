@@ -2,7 +2,7 @@ package com.leqcar.domain.model;
 
 import java.time.LocalDateTime;
 
-public class ValetEvent {
+public class ValetCancelled {
 
 	private LocalDateTime occuredOn;
 }

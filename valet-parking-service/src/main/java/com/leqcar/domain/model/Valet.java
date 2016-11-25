@@ -1,11 +1,19 @@
 package com.leqcar.domain.model;
 
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 /**
  * Created by jongtenerife on 09/11/2016.
@@ -20,15 +28,18 @@ public class Valet {
     @GeneratedValue
     private Long id;
 
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@PrimaryKeyJoinColumn
 	private ClaimTicket claimTicket;
 	
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@PrimaryKeyJoinColumn
 	private ValetAttendant valetAttendant;
 
-	private ValetStatus valetStatus;
+	@Enumerated(EnumType.STRING)
+	private ValetStatus valetStatus = ValetStatus.REQUESTED;
 	
-	private ValetEvent valetEvent;
-	
-	private LocalDateTime dateTimeOccured;
+	private LocalDateTime dateTimeOccured = LocalDateTime.now();
 	
     private LocalDateTime dateTimeIn;
 
@@ -40,16 +51,23 @@ public class Valet {
 
     private String note;
     
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@PrimaryKeyJoinColumn
     private Vehicle vehicle;
     
 	public Valet() {
 		//noop
 	}
 
-
-	public Valet(ClaimTicket claimTicket, LocalDateTime dateTimeIn, LocalDateTime dateTimeOut, String parkingLot,
-			int parkingSpot, String note, Vehicle vehicle) {
-		super();
+	public Valet(ClaimTicket claimTicket
+			, LocalDateTime dateTimeIn
+			, LocalDateTime dateTimeOut
+			, String parkingLot
+			, int parkingSpot
+			, String note
+			, Vehicle vehicle
+			, ValetStatus valetStatus
+			, LocalDateTime dateTimeOccured) {
 		this.claimTicket = claimTicket;
 		this.dateTimeIn = dateTimeIn;
 		this.dateTimeOut = dateTimeOut;
@@ -57,23 +75,41 @@ public class Valet {
 		this.parkingSpot = parkingSpot;
 		this.note = note;
 		this.vehicle = vehicle;
-	}
-
-	public Valet(Vehicle vehicle, ValetEvent valetEvent, ValetStatus valetStatus) {
-		this.vehicle = vehicle;
-		this.valetEvent = valetEvent;
 		this.valetStatus = valetStatus;
+		this.dateTimeOccured = dateTimeOccured;
+	}
+	
+	public Valet(Vehicle vehicle) {
+		this.vehicle = vehicle;
+		this.valetStatus =  ValetStatus.REQUESTED;
+		this.dateTimeOccured = LocalDateTime.now();
 	}
 
-	public Valet requestValet(Vehicle vehicle, ValetEvent valetEvent) {
-		return new Valet(vehicle, valetEvent, ValetStatus.REQUESTED);
+	@Transient
+	public boolean isAccepted() {
+		if (isWithinGracePeriod()) {
+			generateTicketNumber();
+			setValetStatus(ValetStatus.ACCEPTED);
+			return true;
+		}
+		return false;
+	}
+
+	private void generateTicketNumber() {
+		this.claimTicket =  new ClaimTicket(UUID.randomUUID().toString());
 	}
 	
-	public Valet cancelValet(Vehicle vehicle, ValetEvent valetEvent) {
-		return new Valet(vehicle, valetEvent, ValetStatus.CANCELLED);
+	@Transient
+	public boolean isCancelAllowed() {
+		if (isWithinGracePeriod()) {
+			setValetStatus(ValetStatus.CANCELLED);
+			return true;
+		}
+		return false;
 	}
 	
-	public boolean isWithinGracePeriod() {
+	@Transient
+	private boolean isWithinGracePeriod() {
 		Long result=this.dateTimeOccured.until(LocalDateTime.now(), ChronoUnit.MINUTES);
 		return result > GRACE_PERIOD_30MINS ? false : true;
 	}
@@ -111,6 +147,12 @@ public class Valet {
 		return valetAttendant;
 	}
 
+	public boolean hasVehicle() {
+		if (this.vehicle == null || this.vehicle.getDriver() == null) {
+			return false;
+		}
+		return true;
+	}
 
 	public Vehicle getVehicle() {
 		return vehicle;
@@ -132,6 +174,7 @@ public class Valet {
 	public ValetStatus getValetStatus() {
 		return valetStatus;
 	}
+	
 
 	@Override
 	public String toString() {
@@ -144,6 +187,15 @@ public class Valet {
 				", parkingSpot=" + parkingSpot +
 				", note='" + note + '\'' +
 				", vehicle='" + vehicle + '\'' +
+				", valetStatus='" + valetStatus + '\'' +				
 				'}';
+	}
+
+	private void setValetStatus(ValetStatus status) {
+		this.valetStatus = status;
+	}
+
+	public void assignValetAttendant(ValetAttendant assignedValetAttendant) {
+		this.valetAttendant = assignedValetAttendant;
 	}
 }

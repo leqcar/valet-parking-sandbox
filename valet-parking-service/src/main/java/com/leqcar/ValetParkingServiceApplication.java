@@ -4,13 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 
+import com.leqcar.domain.model.Driver;
+import com.leqcar.domain.model.Valet;
 import com.leqcar.domain.model.ValetRepository;
+import com.leqcar.domain.model.Vehicle;
 
 @SpringBootApplication
-@EnableDiscoveryClient
 public class ValetParkingServiceApplication {
 
 	@Autowired
@@ -21,9 +22,18 @@ public class ValetParkingServiceApplication {
 	}
 
 	@Bean
-	CommandLineRunner DummyValetCLR() {
+	CommandLineRunner DummyValetRequestCLR() {
 		return arg -> {
-
+			Vehicle toyotaVehicle = new Vehicle("XYZ123"
+					, new Driver("person1234"
+							, "B-123XYZ"
+							, "John"
+							, "Doe"
+							, "639178881818"));
+			//Valet toyotaValetRequest = Valet.requestFor(toyotaVehicle);
+			Valet toyotaValetRequest = new Valet(toyotaVehicle);
+			valetRepository.save(toyotaValetRequest);
+			valetRepository.findAll().forEach(System.out::println);
 		};
 	}
 }

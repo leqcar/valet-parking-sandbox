@@ -1,8 +1,21 @@
 package com.leqcar.domain.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class ClaimTicket {
 
+	@Id
+	@GeneratedValue
+	private Long id;
+	
 	private String ticketNumber;
+	
+	public ClaimTicket() {
+
+	}
 
 	public ClaimTicket(String ticketNumber) {
 		this.ticketNumber = ticketNumber;

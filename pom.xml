@@ -26,6 +26,7 @@
 		<module>valet-configuration-service</module>
 		<module>valet-vehicle-service</module>
 		<module>valet-parking-service</module>
+		<module>valet-common</module>
 	</modules>    
 	
     <build>

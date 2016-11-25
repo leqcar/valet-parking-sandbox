@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Customer {
+public class Person {
 
 	@Id @GeneratedValue
 	private Long id;
@@ -22,7 +22,7 @@ public class Customer {
 	@OneToMany
 	private Set<Vehicle> vehicles;
 
-	public Customer(String firstName, String lastName, EmailAddress emailAddress, Set<Vehicle> vehicles) {
+	public Person(String firstName, String lastName, EmailAddress emailAddress, Set<Vehicle> vehicles) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
