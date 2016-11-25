@@ -17,12 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.leqcar.common.DriverInfo;
+import com.leqcar.common.DriverInfoResource;
 import com.leqcar.common.ValetResponse;
-import com.leqcar.common.VehicleInfo;
+import com.leqcar.common.VehicleInfoResource;
 import com.leqcar.domain.model.Driver;
 import com.leqcar.domain.model.ValetAttendant;
-import com.leqcar.domain.model.ValetRepository;
 import com.leqcar.domain.model.Vehicle;
 
 @RestController
@@ -33,32 +32,37 @@ public class ValetCommandController {
 	
 	private IValetCommandService valetCommandService;
 	
-	public ValetCommandController(IValetCommandService valetCommandService, ValetRepository valetRepository) {
-		this.valetCommandService = valetCommandService;;
+	public ValetCommandController(IValetCommandService valetCommandService) {
+		this.valetCommandService = valetCommandService;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<ValetResponse> requestValet(@RequestBody VehicleInfo vehicleInfo) {
+	public ResponseEntity<ValetResponse> requestValet(@RequestBody VehicleInfoResource vehicleInfoResource) {
 		LOG.log(Level.INFO, "-- requesting valet service ---");
 		
-		Validate.notNull(vehicleInfo, "Vehicle should not be null");
-		Validate.notNull(vehicleInfo.getDriverInfo(), "Vehicle should have a Driver");
+		Validate.notNull(vehicleInfoResource, "Vehicle should not be null");
+		Validate.notNull(vehicleInfoResource.getDriverInfo(), "Vehicle should have a Driver");
 		
-		ValetResponse response = valetCommandService.requestValet(new Vehicle(vehicleInfo.getPlateNumber(), toDriverModel(vehicleInfo.getDriverInfo())));
+		ValetResponse response = valetCommandService.requestValet(new Vehicle(vehicleInfoResource.getPlateNumber()
+				, toDriverModel(vehicleInfoResource.getDriverInfo())));
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(response.getValetId()).toUri();	
 		
 		response.add(linkTo(ValetCommandController.class)
 				.slash(response.getValetId())
 				.withSelfRel());
-		response.add(linkTo(methodOn(ValetCommandController.class).cancelValetRequest(response.getValetId())).withRel("cancel"));
-		response.add(linkTo(methodOn(ValetCommandController.class).acceptValetRequest(response.getValetId(), new ValetAttendantInfo())).withRel("accept"));
+		response.add(linkTo(methodOn(ValetCommandController.class)
+				.cancelValetRequest(response.getValetId()))
+				.withRel("cancel"));
+		response.add(linkTo(methodOn(ValetCommandController.class)
+				.acceptValetRequest(response.getValetId(), new ValetAttendantInfo()))
+				.withRel("accept"));
 		
 		return ResponseEntity.created(location).body(response);
 		
 	}
-	
-	private Driver toDriverModel(DriverInfo driver) {
+
+	private Driver toDriverModel(DriverInfoResource driver) {
 		return new Driver(driver.getCustomerNumber()
 				, driver.getLicenseNumber()
 				, driver.getFirstName()
@@ -70,9 +74,11 @@ public class ValetCommandController {
 	public ResponseEntity<ValetResponse> cancelValetRequest(@PathVariable("valetId") String valetId) {
 		LOG.log(Level.INFO, "-- cancelling request ---");
 		
-		valetCommandService.cancelRequest(valetId);
-		
-		return ResponseEntity.ok().body(null);
+		ValetResponse response = valetCommandService.cancelRequest(valetId);
+		response.add(linkTo(ValetCommandController.class)
+				.slash(response.getValetId())
+				.withSelfRel());
+		return ResponseEntity.ok(response);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path = "/{valetId}/accept")
@@ -86,7 +92,7 @@ public class ValetCommandController {
 		
 		response.add(linkTo(ValetCommandController.class)
 				.slash(response.getValetId())
-				.withRel("valet"));
+				.withSelfRel());
 		
 		return ResponseEntity.ok(response);
 	}

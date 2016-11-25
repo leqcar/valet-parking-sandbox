@@ -30,21 +30,21 @@ public class DefaultValetCommandService implements IValetCommandService {
 	}
 
 	@Override
-	public void cancelRequest(String valetId) {
+	public ValetResponse cancelRequest(String valetId) {
 		Valet valet = valetRepository.getOne(Long.parseLong(valetId));
-		
-		if (valet.getValetStatus().equals(ValetStatus.REQUESTED) & valet.isCancelAllowed()) {
+		if (valet.isCancelAllowed()) {
 			valetRepository.save(valet);
 		}
+		return new ValetResponse(valet.getId().toString(), valet.getValetStatus().toString());
 	}
 
 	@Override
 	public ValetResponse acceptRequest(String valetId, ValetAttendant valetAttendant) {
 		
 		Valet valet = valetRepository.getOne(Long.parseLong(valetId));
-		valet.assignValetAttendant(valetAttendant);
 		
 		if (valet.isAccepted()) {
+			valet.assignValetAttendant(valetAttendant);
 			valetRepository.save(valet);
 		}	
 	 

@@ -12,7 +12,7 @@ public interface IValetCommandService {
 
 	ValetResponse requestValet(Vehicle vehicle);
 	
-	void cancelRequest(String valetId);
+	ValetResponse cancelRequest(String valetId);
 
 	ValetResponse acceptRequest(String valetId, ValetAttendant valetAttendant);
 }

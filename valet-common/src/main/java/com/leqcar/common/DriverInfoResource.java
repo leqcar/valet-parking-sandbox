@@ -1,6 +1,6 @@
 package com.leqcar.common;
 
-public class DriverInfo {
+public class DriverInfoResource {
 
 	
 	private String customerNumber;
@@ -14,12 +14,12 @@ public class DriverInfo {
 	private String mobileNumber;
 
 
-	public DriverInfo() {
+	public DriverInfoResource() {
 	}
 
 
-	public DriverInfo(String customerNumber, String licenseNumber, String firstName, String lastName,
-			String mobileNumber) {
+	public DriverInfoResource(String customerNumber, String licenseNumber, String firstName, String lastName,
+                              String mobileNumber) {
 		this.customerNumber = customerNumber;
 		this.licenseNumber = licenseNumber;
 		this.firstName = firstName;

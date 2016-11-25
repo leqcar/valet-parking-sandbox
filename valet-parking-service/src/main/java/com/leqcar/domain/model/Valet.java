@@ -87,10 +87,12 @@ public class Valet {
 
 	@Transient
 	public boolean isAccepted() {
-		if (isWithinGracePeriod()) {
-			generateTicketNumber();
-			setValetStatus(ValetStatus.ACCEPTED);
-			return true;
+		if (this.valetStatus.equals(ValetStatus.REQUESTED)) {
+			if (isWithinGracePeriod()) {
+				generateTicketNumber();
+				setValetStatus(ValetStatus.ACCEPTED);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -101,9 +103,11 @@ public class Valet {
 	
 	@Transient
 	public boolean isCancelAllowed() {
-		if (isWithinGracePeriod()) {
-			setValetStatus(ValetStatus.CANCELLED);
-			return true;
+		if (this.valetStatus.equals(ValetStatus.REQUESTED)) {
+			if (isWithinGracePeriod()) {
+				setValetStatus(ValetStatus.CANCELLED);
+				return true;
+			}
 		}
 		return false;
 	}
