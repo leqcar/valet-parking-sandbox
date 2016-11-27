@@ -2,19 +2,17 @@ package com.leqcar.interfaces.command;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.validation.Valid;
 
+import com.leqcar.domain.model.Coordinates;
 import org.apache.commons.lang.Validate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.leqcar.common.DriverInfoResource;
@@ -54,9 +52,9 @@ public class ValetCommandController {
 		response.add(linkTo(methodOn(ValetCommandController.class)
 				.cancelValetRequest(response.getValetId()))
 				.withRel("cancel"));
-		response.add(linkTo(methodOn(ValetCommandController.class)
+		/*response.add(linkTo(methodOn(ValetCommandController.class)
 				.acceptValetRequest(response.getValetId(), new ValetAttendantInfo()))
-				.withRel("accept"));
+				.withRel("accept"));*/
 		
 		return ResponseEntity.created(location).body(response);
 		
@@ -93,8 +91,26 @@ public class ValetCommandController {
 		response.add(linkTo(ValetCommandController.class)
 				.slash(response.getValetId())
 				.withSelfRel());
-		
+
+		response.add(linkTo(ValetCommandController.class)
+				.slash(response.getTicketNumber())
+				.withRel("claim-ticket"));
+
+		response.add(linkTo(methodOn(ValetCommandController.class)
+				.cancelValetRequest(response.getValetId()))
+				.withRel("cancel"));
+
 		return ResponseEntity.ok(response);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, path = "/{valetId}/confirm")
+	public ResponseEntity<ValetResponse> confirm(@PathVariable("valetId") String valetId
+			, @RequestBody @Valid CoordinatesInfo coordinatesInfo) {
+
+		Validate.notNull(coordinatesInfo, "CoordinateInfo should not be null");
+
+		valetCommandService.confirm(valetId, coordinatesInfo);
+		return ResponseEntity.ok(null);
 	}
 
 	private ValetAttendant createValetAttendant(ValetAttendantInfo input) {
@@ -103,5 +119,4 @@ public class ValetCommandController {
 				, input.getLastName()
 				, input.getMobileNumber());
 	}
-
 }

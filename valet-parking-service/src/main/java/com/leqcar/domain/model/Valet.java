@@ -5,15 +5,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.*;
 
 /**
  * Created by jongtenerife on 09/11/2016.
@@ -29,17 +21,25 @@ public class Valet {
     private Long id;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@PrimaryKeyJoinColumn
+	@JoinColumn
 	private ClaimTicket claimTicket;
 	
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@PrimaryKeyJoinColumn
+	@JoinColumn
 	private ValetAttendant valetAttendant;
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn
+	private Location location;
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn
+	private Vehicle vehicle;
 
 	@Enumerated(EnumType.STRING)
 	private ValetStatus valetStatus = ValetStatus.REQUESTED;
 	
-	private LocalDateTime dateTimeOccured = LocalDateTime.now();
+	private LocalDateTime dateTimeOccurred = LocalDateTime.now();
 	
     private LocalDateTime dateTimeIn;
 
@@ -50,10 +50,7 @@ public class Valet {
     private int parkingSpot;
 
     private String note;
-    
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@PrimaryKeyJoinColumn
-    private Vehicle vehicle;
+
     
 	public Valet() {
 		//noop
@@ -67,7 +64,7 @@ public class Valet {
 			, String note
 			, Vehicle vehicle
 			, ValetStatus valetStatus
-			, LocalDateTime dateTimeOccured) {
+			, LocalDateTime dateTimeOccurred) {
 		this.claimTicket = claimTicket;
 		this.dateTimeIn = dateTimeIn;
 		this.dateTimeOut = dateTimeOut;
@@ -76,13 +73,13 @@ public class Valet {
 		this.note = note;
 		this.vehicle = vehicle;
 		this.valetStatus = valetStatus;
-		this.dateTimeOccured = dateTimeOccured;
+		this.dateTimeOccurred = dateTimeOccurred;
 	}
 	
 	public Valet(Vehicle vehicle) {
 		this.vehicle = vehicle;
 		this.valetStatus =  ValetStatus.REQUESTED;
-		this.dateTimeOccured = LocalDateTime.now();
+		this.dateTimeOccurred = LocalDateTime.now();
 	}
 
 	@Transient
@@ -103,7 +100,8 @@ public class Valet {
 	
 	@Transient
 	public boolean isCancelAllowed() {
-		if (this.valetStatus.equals(ValetStatus.REQUESTED)) {
+		if (this.valetStatus.equals(ValetStatus.REQUESTED) ||
+				this.valetStatus.equals(ValetStatus.ACCEPTED)) {
 			if (isWithinGracePeriod()) {
 				setValetStatus(ValetStatus.CANCELLED);
 				return true;
@@ -114,10 +112,23 @@ public class Valet {
 	
 	@Transient
 	private boolean isWithinGracePeriod() {
-		Long result=this.dateTimeOccured.until(LocalDateTime.now(), ChronoUnit.MINUTES);
+		Long result=this.dateTimeOccurred.until(LocalDateTime.now(), ChronoUnit.MINUTES);
 		return result > GRACE_PERIOD_30MINS ? false : true;
 	}
-	
+
+	@Transient
+	public boolean isConfirmed(Double longitude, Double latitude) {
+		if (this.valetStatus.equals(ValetStatus.ACCEPTED)) {
+			if (isWithinGracePeriod()) {
+				toCoordinates(longitude, latitude);
+				setValetStatus(ValetStatus.CONFIRMED);
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	public Long getId() {
 		return id;
 	}
@@ -171,8 +182,8 @@ public class Valet {
 		setDateTimeOut(LocalDateTime.now());
 	}
 		
-	public LocalDateTime getDateTimeRequested() {
-		return dateTimeOccured;
+	public LocalDateTime getDateTimeOccured() {
+		return dateTimeOccurred;
 	}
 
 	public ValetStatus getValetStatus() {
@@ -201,5 +212,19 @@ public class Valet {
 
 	public void assignValetAttendant(ValetAttendant assignedValetAttendant) {
 		this.valetAttendant = assignedValetAttendant;
+	}
+
+	public void toCoordinates(Double longitude, Double latitude) {
+		if (location == null) {
+			location = new Location(null
+					, null
+					, new Coordinates(longitude, latitude));
+		} else {
+			location.setCoordinates(new Coordinates(longitude, latitude));
+		}
+	}
+
+	public Location getLocation() {
+		return location;
 	}
 }

@@ -1,14 +1,29 @@
-server:
-  port: 8888
+spring.profiles.active: 'development'
+
+---
 
 spring:
+  profiles: 'cloud'
   cloud:
     config:
       server:
         git:
-          # uri: https://github.com/leqcar/sampleConfig
-          uri: D:\JONG\git\sampleConfig          
-          
+          uri: https://github.com/leqcar/sampleConfig
+server:
+  port: 8888
+
+---
+
+spring:
+  profiles: 'development, local'
+  cloud:
+    config:
+      server:
+          # uri: D:\JONG\git\sampleConfig
+        git:
+          uri: file://Users/jongtenerife/git/sampleConfig
+server:
+  port: 8888
 
 management:
   context-path: /admin

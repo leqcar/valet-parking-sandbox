@@ -2,10 +2,7 @@ package com.leqcar.domain.model;
 
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 @Entity
 public class Person {
@@ -16,7 +13,9 @@ public class Person {
 	private String firstName;
 	
 	private String lastName;
-	
+
+	@OneToOne
+	@JoinColumn
 	private EmailAddress emailAddress;
 	
 	@OneToMany

@@ -3,6 +3,7 @@ package com.leqcar.domain.model;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
 public class ValetAttendant {
@@ -19,10 +20,8 @@ public class ValetAttendant {
 	
 	private String mobileNumber;
 
-	
 	public ValetAttendant() {
 	}
-
 
 	public ValetAttendant(String employeeNumber, String firstName, String lastName, String mobileNumber) {
 		super();

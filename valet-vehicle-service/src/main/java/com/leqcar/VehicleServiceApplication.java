@@ -15,8 +15,6 @@ import com.leqcar.domain.model.Vehicle;
 import com.leqcar.domain.model.VehicleRepository;
 
 @SpringBootApplication
-@EnableDiscoveryClient
-@EnableEurekaClient
 public class VehicleServiceApplication {
 
 	@Autowired
