@@ -1,6 +1,3 @@
 spring:
   application:
     name: valet-vehicle-service
-  cloud:
-    config:
-      uri: http://localhost:8888

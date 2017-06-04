@@ -1,9 +1,33 @@
-spring.profiles.active: 'development'
+spring.profiles.active: 'cloud'
+
+---
+
+spring:
+  profiles: 'cloud'
+  cloud:
+    config:
+      uri: http://valet-configuration-service:8888
+server:
+    port: 9761
+
+eureka:
+  instance:
+    hostname: valet-discovery-service
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    waitTimeInMsWhenSyncEmpty: 0
 
 ---
 
 spring:
   profiles: 'development'
+  cloud:
+    config:
+      uri: http://localhost:8888
 
 server:
   port: 8761

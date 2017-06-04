@@ -1,9 +1,33 @@
-spring.profiles.active: 'development'
+spring.profiles.active: 'cloud'
+
+---
+
+spring:
+  profiles: 'cloud'
+  application:
+    name: valet-vehicle-service
+  cloud:
+    config:
+      uri: http://valet-configuration-service:8888
+server:
+    port: 8030
+
+eureka:
+    instance:
+      leaseRenewalIntervalInSeconds: 10
+      statusPageUrlPath: /admin/info
+      healthCheckUrlPath: /admin/health
+    client:
+        serviceUrl:
+            defaultZone: http://localhost:9761/eureka/
 
 ---
 
 spring:
   profiles: 'local'
+  cloud:
+    config:
+      uri: http://localhost:8888
 server:
   port: 8080
 
@@ -18,7 +42,9 @@ logging:
 
 spring:
   profiles: 'development'
-
+  cloud:
+    config:
+      uri: http://localhost:8888
 server:
   port: 8010
 
