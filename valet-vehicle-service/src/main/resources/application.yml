@@ -1,4 +1,4 @@
-spring.profiles.active: 'cloud'
+spring.profiles.active: 'development'
 
 ---
 
@@ -46,7 +46,7 @@ spring:
     config:
       uri: http://localhost:8888
 server:
-  port: 8010
+  port: 0
 
 eureka:
   instance:

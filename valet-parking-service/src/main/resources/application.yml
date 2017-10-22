@@ -19,7 +19,7 @@ logging:
 spring:
   profiles: 'development'
 server:
-  port: 8020
+  port: 0
   
 eureka:
   instance:

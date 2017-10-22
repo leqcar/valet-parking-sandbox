@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.1.RELEASE</version>
+        <version>1.5.7.RELEASE</version>
     </parent>
 
     <properties>
@@ -22,10 +22,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>        
         <java.version>1.8</java.version>
-        <spring.boot.version>1.4.1.RELEASE</spring.boot.version>
+        <spring-cloud.version>Dalston.SR4</spring-cloud.version>
         <docker.plugin.version>0.4.13</docker.plugin.version>
     </properties>
-    
+
 	<modules>
 		<module>valet-api-gateway</module>
 		<module>valet-discovery-service</module>
@@ -33,8 +33,20 @@
 		<module>valet-vehicle-service</module>
 		<module>valet-parking-service</module>
 		<module>valet-common</module>
-	</modules>    
-	
+	</modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -90,7 +102,7 @@
                                             spring-boot-maven-plugin
                                         </artifactId>
                                         <versionRange>
-                                            [1.3.4.RELEASE,)
+                                            [1.5.0.RELEASE,)
                                         </versionRange>
                                         <goals>
                                             <goal>build-info</goal>
